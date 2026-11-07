@@ -17,8 +17,11 @@ public class LoginPanel extends JFrame {
     private JLabel labelPlate;
     private JLabel labelPassword;
 
-    public LoginPanel() {
+    private final ParkingSystem parkingSystem;
+
+    public LoginPanel(ParkingSystem manager) {
         super("SM Parking Log-in");
+        this.parkingSystem = manager;
         setContentPane(mainPanel);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(400,400);
@@ -49,14 +52,21 @@ public class LoginPanel extends JFrame {
                         JOptionPane.showMessageDialog(null, "Wrong Password!");
                         return;
                     }
-                    //openWindowAdmin
+                    dispose();
+                    AdminPanel adminPanel = new AdminPanel(parkingSystem);
+                    adminPanel.setVisible(true);
                 } else{
                     String name = textFieldName.getText();
                     String plateNumber = textFieldPlateNumber.getText();
                     if(name.isEmpty() || plateNumber.isEmpty()) {
                         JOptionPane.showMessageDialog(null, "Name or Plate Cannot be empty");
                     }
-                    //openUserWindow
+                    if(parkingSystem.hasUser(name)){
+                        parkingSystem.addUser(new User(name, plateNumber));
+                    }
+                    dispose();
+                    UserPanel userPanel = new UserPanel(parkingSystem,name,plateNumber);
+                    userPanel.setVisible(true);
                 }
             }
         });
@@ -73,7 +83,8 @@ public class LoginPanel extends JFrame {
     }
 
     public static void main(String [] args){
-        LoginPanel login = new LoginPanel();
+        ParkingSystem parkingSystem = new ParkingSystem();
+        LoginPanel login = new LoginPanel(parkingSystem);
         login.setVisible(true);
     }
 }
