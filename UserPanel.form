@@ -279,7 +279,6 @@
                   <font size="13" style="0"/>
                   <foreground color="-14996664"/>
                   <model>
-                    <item value="Regular Parking"/>
                     <item value="Valet Service"/>
                     <item value="EV Charging"/>
                   </model>
