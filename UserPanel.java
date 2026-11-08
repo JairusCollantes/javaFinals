@@ -36,7 +36,7 @@ public class UserPanel extends JFrame {
         
         setContentPane(mainTabbedPane);
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
-        setSize(400,400);
+        setSize(750,500);
         setLocationRelativeTo(null);
 
         labelName.setText("User Info: "+ logInNames +" (" + logInPlate + ")");

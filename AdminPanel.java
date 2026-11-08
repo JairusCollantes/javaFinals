@@ -31,7 +31,7 @@ public class AdminPanel  extends JFrame {
         
         setContentPane(mainTabPanel);
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
-        setSize(400,400);
+        setSize(750,500);
         setLocationRelativeTo(null);
 
         tableModelHistory = new DefaultTableModel();

@@ -1,6 +1,7 @@
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.List;
 
 public class LoginPanel extends JFrame {
 
@@ -16,6 +17,8 @@ public class LoginPanel extends JFrame {
     private JLabel labelName;
     private JLabel labelPlate;
     private JLabel labelPassword;
+    private JLabel labelUsers;
+    private JComboBox comboBoxUsers;
 
     private final ParkingSystem parkingSystem;
 
@@ -24,12 +27,13 @@ public class LoginPanel extends JFrame {
         this.parkingSystem = manager;
         setContentPane(mainPanel);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(400,400);
+        setSize(500,500);
         setLocationRelativeTo(null);
 
         userRadioButton.setSelected(true);
 
         toggleRole();
+        refreshUserCombo();
 
         userRadioButton.addActionListener(new ActionListener() {
             @Override
@@ -71,6 +75,24 @@ public class LoginPanel extends JFrame {
                 }
             }
         });
+        comboBoxUsers.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Object sel = comboBoxUsers.getSelectedItem();
+                if (sel == null) {
+                    return;
+                }
+                String selected = sel.toString();
+                if ("None".equals(selected)) {
+                    textFieldName.setText("");
+                    textFieldPlateNumber.setText("");
+                } else if (sel instanceof User) {
+                    User u = (User) sel;
+                    textFieldName.setText(u.getName());
+                    textFieldPlateNumber.setText(u.getPlate());
+                }
+            }
+        });
     }
 
     private void toggleRole(){
@@ -81,6 +103,17 @@ public class LoginPanel extends JFrame {
         textFieldName.setVisible(!admin);
         labelPassword.setVisible(admin);
         passwordField.setVisible(admin);
+        labelUsers.setVisible(!admin);
+        comboBoxUsers.setVisible(!admin);
+    }
+
+    private void refreshUserCombo() {
+        comboBoxUsers.removeAllItems();
+        comboBoxUsers.addItem("None");
+        List<User> all = parkingSystem.getUsers();
+        for (User u : all) {
+            comboBoxUsers.addItem(u);
+        }
     }
 
     public static void main(String [] args){
