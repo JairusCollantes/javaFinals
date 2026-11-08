@@ -74,6 +74,16 @@ public class ParkingSystem {
         return n;
     }
 
+    public boolean removeReservation(String reservationId) {
+        for (int i = 0; i < reservations.size(); i++) {
+            if (reservations.get(i).getReservationId().equals(reservationId)) {
+                reservations.remove(i);
+                return true;
+            }
+        }
+        return false;
+    }
+
     public int getAvailable(ParkingType type) {
         return type.getCapacity() - getActiveCount(type);
     }

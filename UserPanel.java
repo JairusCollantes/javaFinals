@@ -67,11 +67,11 @@ public class UserPanel extends JFrame {
                     double total = parkingType.computeTotalFee();
                     String breakdown;
                     if (serviceName.equals("Valet Service")) {
-                        breakdown = "PHP 25.00 (base) + PHP 100.00 (valet) = PHP 125.00";
+                        breakdown = "PHP 125.00 - Valet Service";
                     }else if (serviceName.equals("EV Charging")) {
-                        breakdown = "PHP 50.00 flat — EV spot premium (charging is FREE)";
+                        breakdown = "PHP 50.00 — EV Charging";
                     }else {
-                    breakdown= "PHP 25.00 flat";
+                    breakdown= "PHP 25.00 - Regular";
                     }
                     if (JOptionPane.showConfirmDialog(null,
                             "Collect PHP " + String.format("%,.2f", total) +
@@ -87,10 +87,10 @@ public class UserPanel extends JFrame {
 
                     JOptionPane.showMessageDialog(null,
                             "Payment Received — You May Now Enter\n\n" +
-                                    "Ticket: " + t.getTicketId() + "\n" +
-                                    "Plate: " + logInPlate + "\n" +
-                                    "Service: " + serviceName + "\n" +
-                                    "Paid: PHP " + String.format("%,.2f", total),
+                                    "Ticket  : " + t.getTicketId() + "\n" +
+                                    "Plate   : " + logInPlate + "\n" +
+                                    "Service : " + serviceName + "\n" +
+                                    "Paid    : PHP " + String.format("%,.2f", total),
                             "Ticket Issued", JOptionPane.INFORMATION_MESSAGE);
                 } catch (Exception ex) {
                     JOptionPane.showMessageDialog(null,ex.getMessage());
@@ -162,7 +162,7 @@ public class UserPanel extends JFrame {
                             "Reservation Confirmed\n\n" +
                                     "ID       : " + r.getReservationId() + "\n" +
                                     "Service  : " + serviceName + "\n" +
-                                    "Schedule : " + schedule,
+                                    "Schedule : " + r.getScheduled(),
                             "Reservation Confirmed", JOptionPane.INFORMATION_MESSAGE);
                 } catch (Exception ex) {
                     JOptionPane.showMessageDialog(null,ex.getMessage());

@@ -60,6 +60,7 @@ public class LoginPanel extends JFrame {
                     String plateNumber = textFieldPlateNumber.getText();
                     if(name.isEmpty() || plateNumber.isEmpty()) {
                         JOptionPane.showMessageDialog(null, "Name or Plate Cannot be empty");
+                        return;
                     }
                     if(parkingSystem.hasUser(name)){
                         parkingSystem.addUser(new User(name, plateNumber));

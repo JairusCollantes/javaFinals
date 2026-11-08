@@ -15,8 +15,13 @@ public class AdminPanel  extends JFrame {
     private JRadioButton allRadioButton;
     private JRadioButton inLotRadioButton;
     private JRadioButton exitedRadioButton;
+    private JTable tableReservation;
+    private JButton buttonReserveLogOut;
+    private JButton cancelReservationButton;
+    private JButton checkInButton;
 
     DefaultTableModel tableModelHistory;
+    DefaultTableModel tableModelReserve;
 
     private final ParkingSystem parkingSystem;
 
@@ -38,7 +43,16 @@ public class AdminPanel  extends JFrame {
         tableModelHistory.addColumn("Price");
         tableModelHistory.addColumn("Status");
 
+        tableModelReserve = new DefaultTableModel();
+        tableModelReserve.addColumn("ID");
+        tableModelReserve.addColumn("Plate");
+        tableModelReserve.addColumn("Name");
+        tableModelReserve.addColumn("Service");
+        tableModelReserve.addColumn("Schedule");
+        tableModelReserve.addColumn("Status");
+
         tableHistory.setModel(tableModelHistory);
+        tableReservation.setModel(tableModelReserve);
         allRadioButton.setSelected(true);
         updateUI();
 
@@ -50,6 +64,13 @@ public class AdminPanel  extends JFrame {
             }
         });
         logOutButtonHistory.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                dispose();
+                new LoginPanel(parkingSystem).setVisible(true);
+            }
+        });
+        buttonReserveLogOut.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 dispose();
@@ -105,6 +126,62 @@ public class AdminPanel  extends JFrame {
                 JOptionPane.showMessageDialog(null, "Ticket "+ticket.getTicketId()+" Marked Successfully", "Success", JOptionPane.INFORMATION_MESSAGE);
             }
         });
+        checkInButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int row = tableReservation.getSelectedRow();
+                if (row < 0) {
+                    JOptionPane.showMessageDialog(AdminPanel.this, "Please Select a Reservation", "Error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+                String id = tableModelReserve.getValueAt(row, 0).toString();
+                Reservation r = null;
+                for (Reservation res : parkingSystem.getReservations()) {
+                    if (res.getReservationId().equals(id)) {
+                        r = res;
+                        break;
+                    }
+                }
+                if (r == null) {
+                    return;
+                }
+                double fee = r.getService().computeTotalFee();
+                if (JOptionPane.showConfirmDialog(null,
+                        "Check in " + r.getVehicle().getPlateNumber() +
+                                " (owner: " + r.getVehicle().getOwnerName() + ")?\n" +
+                                "Collect fee: PHP " + String.format("%,.2f", fee),
+                        "Confirm Check-In", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) != JOptionPane.YES_OPTION) {
+                    return;
+                }
+                Ticket t = new Ticket(parkingSystem.nextTicketId(), r.getVehicle(), r.getService());
+                parkingSystem.addTicket(t);
+                parkingSystem.removeReservation(r.getReservationId());
+                updateUI();
+
+                JOptionPane.showMessageDialog(null, "Ticket " + t.getTicketId() + " Issued — Payment Collected",
+                        "Success", JOptionPane.INFORMATION_MESSAGE);
+            }
+        });
+        cancelReservationButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int row = tableReservation.getSelectedRow();
+                if (row < 0) {
+                    JOptionPane.showMessageDialog(AdminPanel.this, "Please Select a Reservation", "Error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+                String id = tableModelReserve.getValueAt(row, 0).toString();
+                if (JOptionPane.showConfirmDialog(null,
+                        "Cancel reservation " + id + "?",
+                        "Confirm", JOptionPane.YES_NO_OPTION) != JOptionPane.YES_OPTION) {
+                    return;
+                }
+                parkingSystem.removeReservation(id);
+                updateUI();
+
+                JOptionPane.showMessageDialog(null, "Reservation " + id + " Cancelled", "Success", JOptionPane.INFORMATION_MESSAGE);
+            }
+        });
     }
 
     private void refreshHistory(){
@@ -131,6 +208,19 @@ public class AdminPanel  extends JFrame {
             });
         }
     }
+    private void refreshReservations() {
+        tableModelReserve.setRowCount(0);
+        for (Reservation r : parkingSystem.getReservations()) {
+            tableModelReserve.addRow(new Object[]{
+                    r.getReservationId(),
+                    r.getVehicle().getPlateNumber(),
+                    r.getVehicle().getOwnerName(),
+                    r.getService().getLabel(),
+                    r.getScheduled(),
+                    "Reserved"
+            });
+        }
+    }
      void updateExitSummary() {
         Ticket t = (Ticket) comboBoxTickets.getSelectedItem();
         if (t == null) {
@@ -145,7 +235,7 @@ public class AdminPanel  extends JFrame {
                         "Paid    : PHP " + String.format("%,.2f", t.getTotalFee()));
     }
     void updateUI(){
-        List<Ticket> tickets = parkingSystem.getTickets();
+        List<Ticket> tickets = parkingSystem.getActiveTickets();
         DefaultComboBoxModel<Ticket> model = new DefaultComboBoxModel<>();
         for(Ticket t: tickets){
             model.addElement(t);
@@ -153,5 +243,6 @@ public class AdminPanel  extends JFrame {
         comboBoxTickets.setModel(model);
         updateExitSummary();
         refreshHistory();
+        refreshReservations();
     }
 }

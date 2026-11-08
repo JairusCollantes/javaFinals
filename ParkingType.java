@@ -14,9 +14,6 @@ public abstract class ParkingType {
     public int getCapacity() {
         return capacity;
     }
-    public boolean isReservable() {
-        return !this.label.equals("Regular Parking");
-    }
 
     public abstract double computeBaseFee();
     public abstract double computeExtraFee();

@@ -485,6 +485,7 @@
                     <constraints/>
                     <properties>
                       <background color="-1"/>
+                      <editable value="false"/>
                       <font size="13" style="0"/>
                       <foreground color="-14996664"/>
                     </properties>
