@@ -66,7 +66,7 @@ public class LoginPanel extends JFrame {
                         JOptionPane.showMessageDialog(null, "Name or Plate Cannot be empty");
                         return;
                     }
-                    if(parkingSystem.hasUser(name)){
+                    if(!parkingSystem.hasUser(name)){
                         parkingSystem.addUser(new User(name, plateNumber));
                     }
                     dispose();
